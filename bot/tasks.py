@@ -6,7 +6,12 @@ import time
 from telegram.ext import Application
 
 from . import k8s
-from .config import ALLOWED_USER_ID, ANNOTATION_EXPOSED_AT, FUNNEL_DURATION_SECONDS
+from .config import (
+    ALLOWED_USER_ID,
+    ANNOTATION_DURATION,
+    ANNOTATION_EXPOSED_AT,
+    FUNNEL_DURATION_SECONDS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +37,8 @@ async def cleanup_expired_funnels(app: Application) -> None:
                     )
                     continue
 
-                if elapsed >= FUNNEL_DURATION_SECONDS:
+                duration = int(ann.get(ANNOTATION_DURATION, FUNNEL_DURATION_SECONDS))
+                if elapsed >= duration:
                     name = ingress.metadata.name
                     ns = ingress.metadata.namespace
                     logger.info("Closing expired funnel: %s/%s", ns, name)
