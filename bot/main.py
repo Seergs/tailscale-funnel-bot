@@ -22,6 +22,8 @@ def _configure_logging() -> None:
 
 _configure_logging()
 
+logger = logging.getLogger(__name__)
+
 
 async def _post_init(application):
     await application.bot.set_my_commands([
@@ -34,6 +36,7 @@ async def _post_init(application):
 
 
 def main() -> None:
+    logger.info("Starting bot")
     app = (
         ApplicationBuilder()
         .token(TELEGRAM_TOKEN)
