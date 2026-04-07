@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tailscale-funnel-bot
+  namespace: funnel-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tailscale-funnel-bot
+  template:
+    metadata:
+      labels:
+        app: tailscale-funnel-bot
+    spec:
+      serviceAccountName: funnel-bot-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+      containers:
+      - name: bot
+        image: ghcr.io/seergs/tailscale-funnel-bot:latest
+        imagePullPolicy: Always
+        env:
+        - name: TELEGRAM_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: funnel-bot-secrets
+              key: TELEGRAM_TOKEN
+        - name: ALLOWED_USER_ID
+          valueFrom:
+            secretKeyRef:
+              name: funnel-bot-secrets
+              key: ALLOWED_USER_ID
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+          requests:
+            cpu: "50m"
+            memory: "64Mi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+
