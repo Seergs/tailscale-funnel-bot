@@ -1,11 +1,10 @@
-import asyncio
 import logging
 
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from .config import ALLOWED_USER_ID, IGNORED_NAMESPACES
 from . import k8s, tasks
+from .config import ALLOWED_SVC, ALLOWED_USER_ID, IGNORED_NS, IGNORED_SVC
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +40,7 @@ async def expose(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             f"*Funnel created:* `{funnel_name}`\nI'll ping you when it's ready...",
             parse_mode="Markdown",
         )
-        asyncio.create_task(
+        context.application.create_task(
             tasks.wait_and_notify(context.application, funnel_name, ns)
         )
     except Exception as e:
@@ -83,7 +82,7 @@ async def list_services(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
 
     try:
-        svcs = k8s.get_services(IGNORED_NAMESPACES)
+        svcs = k8s.get_services(IGNORED_NS, IGNORED_SVC, ALLOWED_SVC)
         if not svcs:
             await update.message.reply_text("No available services")
             return
@@ -92,7 +91,7 @@ async def list_services(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         lines = []
         for svc in svcs:
             key = f"{svc.metadata.namespace}/{svc.metadata.name}"
-            indicator = " 🟢" if key in active_funnels else ""
+            indicator = " 🟢 (*Active*)" if key in active_funnels else ""
             lines.append(f"`{key}`{indicator}")
 
         await update.message.reply_text("\n".join(lines), parse_mode="Markdown")

@@ -1,7 +1,8 @@
 import time
+
 from kubernetes import client, config
 
-from .config import ANNOTATION_FUNNEL, ANNOTATION_EXPOSED_AT
+from .config import ANNOTATION_EXPOSED_AT, ANNOTATION_FUNNEL
 
 try:
     config.load_incluster_config()
@@ -12,16 +13,27 @@ _v1 = client.CoreV1Api()
 _networking = client.NetworkingV1Api()
 
 
-def get_services(ignored_namespaces: frozenset[str]) -> list[client.V1Service]:
-    return [
-        svc
-        for svc in _v1.list_service_for_all_namespaces().items
-        if svc.spec.type == "ClusterIP"
-        and svc.metadata.name != "kubernetes"
-        and not svc.metadata.name.endswith("-funnel")
-        and svc.metadata.namespace not in ignored_namespaces
-    ]
+def get_services(ignored_ns, ignored_svc, allowed_svc) -> list[client.V1Service]:
+    all_svcs = _v1.list_service_for_all_namespaces().items
+    
+    filtered_svcs = []
+    for svc in all_svcs:
+        name = svc.metadata.name
+        namespace = svc.metadata.namespace
 
+        if svc.spec.type != "ClusterIP" or name == "kubernetes" or name.endswith("-funnel"):
+            continue
+
+        if name in allowed_svc:
+            filtered_svcs.append(svc)
+            continue
+
+        if namespace in ignored_ns or name in ignored_svc:
+            continue
+
+        filtered_svcs.append(svc)
+
+    return filtered_svcs
 
 def get_active_funnels() -> set[str]:
     active = set()
