@@ -13,11 +13,11 @@ WORKDIR /app
 
 COPY --from=builder /app/lib /app/lib
 
-COPY bot.py .
+COPY bot/ ./bot/
 
 ENV PYTHONPATH=/app/lib
 ENV PYTHONUNBUFFERED=1
 
 USER 65532
 
-ENTRYPOINT ["/usr/bin/python3", "bot.py"]
+ENTRYPOINT ["/usr/bin/python3", "-m", "bot.main"]
