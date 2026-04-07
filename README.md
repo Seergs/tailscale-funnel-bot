@@ -35,9 +35,9 @@ kubectl apply -k deploy/
 kubectl rollout status deployment/tailscale-funnel-bot -n funnel-bot
 ```
 
-## Commands
+## Configuration
 
-All configuration is via environment vairbales, set in `deploy/secret.yaml`:
+All configuration is via environment variables, set in `deploy/secret.yaml`:
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
@@ -45,6 +45,8 @@ All configuration is via environment vairbales, set in `deploy/secret.yaml`:
 | `ALLOWED_USER_ID` | Yes | — | Your Telegram user ID |
 | `FUNNEL_DURATION_SECONDS` | No | `3600` | Auto-close timeout in seconds |
 | `IGNORED_NAMESPACES` | No | `kube-system,tailscale,funnel-bot,flux-system,longhorn-system` | Namespaces hidden from `/list` |
+| `IGNORED_SERVICES` | No | — | Comma-separated service names to always hide from `/list` |
+| `ALLOWED_SERVICES` | No | — | Comma-separated service names to always show in `/list`, bypassing namespace filters |
 
 ## Security considerations
 
