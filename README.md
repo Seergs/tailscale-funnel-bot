@@ -47,6 +47,7 @@ All configuration is via environment variables, set in `deploy/secret.yaml`:
 | `IGNORED_NAMESPACES` | No | `kube-system,tailscale,funnel-bot,flux-system,longhorn-system` | Namespaces hidden from `/list` |
 | `IGNORED_SERVICES` | No | — | Comma-separated service names to always hide from `/list` |
 | `ALLOWED_SERVICES` | No | — | Comma-separated service names to always show in `/list`, bypassing namespace filters |
+| `LOG_FORMAT` | No | `json` | Log output format: `json` for structured logging, `text` for human-readable output |
 
 ## Security considerations
 

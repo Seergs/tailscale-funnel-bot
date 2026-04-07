@@ -1,2 +1,3 @@
 python-telegram-bot==22.*
 kubernetes==35.*
+python-json-logger==4.*
