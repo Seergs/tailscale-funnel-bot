@@ -1,10 +1,9 @@
-import asyncio
 import logging
 
 from telegram.ext import ApplicationBuilder, CommandHandler
 
-from .config import TELEGRAM_TOKEN
 from . import handlers, tasks
+from .config import TELEGRAM_TOKEN
 
 logging.basicConfig(
     format="%(asctime)s %(name)s %(levelname)s %(message)s",
@@ -18,7 +17,7 @@ async def _post_init(application):
         ("close", "Close a Tailscale Funnel"),
         ("list", "List exposable services"),
     ])
-    asyncio.create_task(tasks.cleanup_expired_funnels(application))
+    application.create_task(tasks.cleanup_expired_funnels(application))
 
 
 def main() -> None:
