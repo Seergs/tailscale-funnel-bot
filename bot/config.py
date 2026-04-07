@@ -7,6 +7,7 @@ FUNNEL_DURATION_SECONDS: int = int(os.getenv("FUNNEL_DURATION_SECONDS", "3600"))
 
 ANNOTATION_FUNNEL = "tailscale.com/funnel"
 ANNOTATION_EXPOSED_AT = "tailscale-funnel-bot/exposed-at"
+ANNOTATION_DURATION = "tailscale-funnel-bot/duration-seconds"
 
 _DEFAULT_IGNORED_NAMESPACES = "kube-system,tailscale,funnel-bot,flux-system,longhorn-system"
 

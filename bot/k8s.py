@@ -2,7 +2,7 @@ import time
 
 from kubernetes import client, config
 
-from .config import ANNOTATION_EXPOSED_AT, ANNOTATION_FUNNEL
+from .config import ANNOTATION_DURATION, ANNOTATION_EXPOSED_AT, ANNOTATION_FUNNEL
 
 try:
     config.load_incluster_config()
@@ -55,7 +55,7 @@ def get_all_funnel_ingresses() -> list[client.V1Ingress]:
     ]
 
 
-def expose_service(svc_name: str, namespace: str) -> str:
+def expose_service(svc_name: str, namespace: str, duration_seconds: int | None = None) -> str:
     original = _v1.read_namespaced_service(name=svc_name, namespace=namespace)
     ports = original.spec.ports
     if not ports:
@@ -64,14 +64,18 @@ def expose_service(svc_name: str, namespace: str) -> str:
     funnel_name = f"{svc_name}-funnel"
     port = ports[0].port
 
+    annotations = {
+        ANNOTATION_FUNNEL: "true",
+        ANNOTATION_EXPOSED_AT: str(int(time.time())),
+    }
+    if duration_seconds is not None:
+        annotations[ANNOTATION_DURATION] = str(duration_seconds)
+
     body = client.V1Ingress(
         metadata=client.V1ObjectMeta(
             name=funnel_name,
             namespace=namespace,
-            annotations={
-                ANNOTATION_FUNNEL: "true",
-                ANNOTATION_EXPOSED_AT: str(int(time.time())),
-            },
+            annotations=annotations,
         ),
         spec=client.V1IngressSpec(
             ingress_class_name="tailscale",
