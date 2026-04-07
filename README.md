@@ -48,6 +48,9 @@ All configuration is via environment vairbales, set in `deploy/secret.yaml`:
 
 ## Security considerations
 
+> Tailscale Funnel exposes your service to the public internet. Only expose services
+> that are protected with authentication, and close funnels as soon as you no longer need them
+
 - Only the configured `ALLOWED_USER_ID` can interact with the bot
 - The bot requires cluster-wide read access to Services and write access to Ingresses. Please review `deploy/rbac.yaml` before deploying
 - Funnels are automatically closed after `FUNNEL_DURATION_SECONDS` to limit exposure
