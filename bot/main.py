@@ -16,6 +16,7 @@ async def _post_init(application):
         ("expose", "Expose a service via Tailscale Funnel"),
         ("close", "Close a Tailscale Funnel"),
         ("list", "List exposable services"),
+        ("status", "Show active funnels and time remaining"),
     ])
     application.create_task(tasks.cleanup_expired_funnels(application))
 
@@ -30,6 +31,7 @@ def main() -> None:
     app.add_handler(CommandHandler("expose", handlers.expose))
     app.add_handler(CommandHandler("close", handlers.close))
     app.add_handler(CommandHandler("list", handlers.list_services))
+    app.add_handler(CommandHandler("status", handlers.status))
     app.run_polling()
 
 
