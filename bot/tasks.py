@@ -5,8 +5,8 @@ import time
 
 from telegram.ext import Application
 
-from .config import ALLOWED_USER_ID, ANNOTATION_EXPOSED_AT, FUNNEL_DURATION_SECONDS
 from . import k8s
+from .config import ALLOWED_USER_ID, ANNOTATION_EXPOSED_AT, FUNNEL_DURATION_SECONDS
 
 logger = logging.getLogger(__name__)
 
