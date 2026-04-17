@@ -6,6 +6,15 @@ A telegram bot that temporarily exposes Kubernetes services to the internet usin
 
 Send `/expose namespace/service` and the bot creates a Tailscale Funnel ingress, notifies you when the URL is ready, and automatically closes it after 1 hour (configurable)
 
+## Commands
+
+| Command | Description |
+|---|---|
+| `/expose namespace/service [duration]` | Expose a service via Tailscale Funnel. Duration examples: `30m`, `2h` (default: 1h). Notifies you when the URL is ready |
+| `/close namespace/service` | Immediately close the funnel for a service |
+| `/status` | List all active funnels with time remaining before auto-close |
+| `/list` | List all available services; active funnels are marked with 🟢 |
+
 ## Prerequisites
 
 - Kubernetes cluster with [Tailscale Operator](https://tailscale.com/docs/features/kubernetes-operator) installed
