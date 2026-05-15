@@ -53,7 +53,8 @@ async def cleanup_expired_funnels(app: Application) -> None:
                         logger.exception("Failed to delete expired funnel %s/%s", ns, name)
                         await app.bot.send_message(
                             chat_id=ALLOWED_USER_ID,
-                            text=f"*Error:* Failed to auto-delete funnel `{name}` in `{ns}`. Please close it manually with /close.",
+                            text=f"*Error:* Failed to auto-delete funnel `{name}` in `{ns}`."
+                            " Please close it manually with /close.",
                             parse_mode="Markdown",
                         )
         except Exception:
