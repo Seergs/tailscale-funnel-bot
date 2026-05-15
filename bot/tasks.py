@@ -42,12 +42,20 @@ async def cleanup_expired_funnels(app: Application) -> None:
                     name = ingress.metadata.name
                     ns = ingress.metadata.namespace
                     logger.info("Closing expired funnel: %s/%s", ns, name)
-                    k8s.delete_ingress(name=name, namespace=ns)
-                    await app.bot.send_message(
-                        chat_id=ALLOWED_USER_ID,
-                        text=f"**Expired:** Funnel `{name}` in `{ns}` closed automatically.",
-                        parse_mode="Markdown",
-                    )
+                    try:
+                        k8s.delete_ingress(name=name, namespace=ns)
+                        await app.bot.send_message(
+                            chat_id=ALLOWED_USER_ID,
+                            text=f"**Expired:** Funnel `{name}` in `{ns}` closed automatically.",
+                            parse_mode="Markdown",
+                        )
+                    except Exception:
+                        logger.exception("Failed to delete expired funnel %s/%s", ns, name)
+                        await app.bot.send_message(
+                            chat_id=ALLOWED_USER_ID,
+                            text=f"*Error:* Failed to auto-delete funnel `{name}` in `{ns}`. Please close it manually with /close.",
+                            parse_mode="Markdown",
+                        )
         except Exception:
             logger.exception("Cleanup loop error")
 
